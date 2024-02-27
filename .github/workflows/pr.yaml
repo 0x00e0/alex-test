@@ -1,0 +1,13 @@
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
