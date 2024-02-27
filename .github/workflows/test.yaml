@@ -18,4 +18,5 @@ jobs:
             with:
               role-to-assume: arn:aws:iam::545408478668:role/ghe-test-role
               role-session-name: GitHub_to_AWS_via_FederatedOIDC
+              aws-region: ap-northeast-1
 
