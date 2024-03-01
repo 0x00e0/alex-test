@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v2
         with:
@@ -38,13 +38,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Configure AWS Credentials
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::545408478668:role/ghe-test-role
           aws-region: ap-northeast-1
       - name: Login to Amazon ECR Private
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main'
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
