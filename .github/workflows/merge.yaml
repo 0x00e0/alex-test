@@ -48,3 +48,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: pull_wallet_core
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker pull 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore:v4.2.0
+          docker tag 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore:v4.2.0 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:v1.1.0
+
+      - name: push_test_image
+        if: github.ref == 'refs/heads/main'
+        run: |
+            docker push 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:v1.1.0
+            
