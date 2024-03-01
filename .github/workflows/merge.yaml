@@ -1,21 +1,48 @@
+name: Auto Build & Push To Amazon ECR
+
 on:
-    push:
-      branches: [ main ]
+  push:
+    branches:
+      - '*'
 
-
-permissions:
-    id-token: write   # This is required for requesting the JWT
-    contents: read    # This is required for actions/checkout
 jobs:
-    AssumeRoleAndCallIdentity:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Git clone the repository
-            uses: actions/checkout@v3
-          - name: configure aws credentials
-            uses: aws-actions/configure-aws-credentials@v1.7.0
-            with:
-              role-to-assume: arn:aws:iam::545408478668:role/ghe-test-role
-              role-session-name: GitHub_to_AWS_via_FederatedOIDC
-              aws-region: ap-northeast-1
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: paulhatch/semantic-version@v4.0.2
+        id: semver
+        with:
+          tag_prefix: "v"
+          major_pattern: "BREAKING CHANGE:"
+          minor_pattern: "feat:"
+          format: "${major}.${minor}.${patch}"
+          short_tags: false
+          bump_each_commit: true
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag_prefix: ""
+          custom_tag: ${{ steps.semver.outputs.version_tag }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Configure AWS Credentials
+        if: github.event_name != 'pull_request'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::545408478668:role/ghe-test-role
+          aws-region: ap-northeast-1
+      - name: Login to Amazon ECR Private
+        if: github.event_name != 'pull_request'
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
