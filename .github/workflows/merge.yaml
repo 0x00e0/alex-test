@@ -69,7 +69,7 @@ jobs:
           context: .
           push: true
           target: prod
-          tags: ${{ steps.semver.outputs.version_tag }}
+          tags: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:${{ steps.semver.outputs.version_tag }}
           build-args: |
             WALLET_CORE_IMAGE=545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore
           provenance: false
