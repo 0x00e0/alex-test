@@ -48,14 +48,29 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: pull_wallet_core
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker pull 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore:v4.2.0
-          docker tag 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore:v4.2.0 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:v1.1.0
+      # - name: pull_wallet_core
+      #   if: github.ref == 'refs/heads/main'
+      #   run: |
+      #     docker pull 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore:v4.2.0
+      #     docker tag 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore:v4.2.0 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:v1.1.0
 
-      - name: push_test_image
-        if: github.ref == 'refs/heads/main'
-        run: |
-            docker push 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:v1.1.0
-            
+      # - name: push_test_image
+      #   if: github.ref == 'refs/heads/main'
+      #   run: |
+      #       docker push 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:v1.1.0
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick
+      - name: Build Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          target: prod
+          tags: ${{ steps.semver.outputs.version_tag }}
+          build-args: |
+            WALLET_CORE_IMAGE=545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore
+          provenance: false
+          sbom: false
