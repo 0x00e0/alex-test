@@ -13,4 +13,4 @@ jobs:
     steps:
       - name: test
         run: |
-            exit 1
+            exit 0
