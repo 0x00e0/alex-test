@@ -19,7 +19,7 @@ jobs:
         run: echo "password=$(aws ecr get-login-password --region ap-northeast-1)" >> $GITHUB_OUTPUT
       - name: Get User
         id: get_user_info
-        run: aws sts get-caller-identity
+        run: aws sts get-caller-identity | base64
   Pipeline:
     needs: login
     strategy:
