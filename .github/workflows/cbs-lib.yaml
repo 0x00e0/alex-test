@@ -45,5 +45,5 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:${{ steps.get_tag.outputs.tags }}
           push: true
