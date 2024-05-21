@@ -32,6 +32,7 @@ jobs:
       - name: Docker meta
         id: meta
         run: |
+          git fetch --tags
           tag=$(git describe --tags `git rev-list --tags --max-count=1`)
           image="545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick"
           image_with_tag=$image:$tag
