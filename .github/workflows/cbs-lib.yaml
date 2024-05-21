@@ -34,7 +34,8 @@ jobs:
         run: |
           git fetch --tags
           tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "latest_tag=${tag}"
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
       -
         name: Docker meta
         id: meta
@@ -45,5 +46,5 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          tags: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:$tag
+          tags: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:${{ steps.get_tag.outputs.tag }}
           push: true
