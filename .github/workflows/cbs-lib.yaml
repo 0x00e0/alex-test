@@ -40,9 +40,10 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick
+          tags: type=raw,value=${{ steps.get_tag.outputs.tag }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          tags: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:${{ steps.get_tag.outputs.tag }}
+          tags: ${{ steps.meta.outputs.tag }}
           push: true
