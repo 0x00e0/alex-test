@@ -17,9 +17,7 @@ jobs:
       - name: Get AWS password
         id: get_password
         run: echo "password=$(aws ecr get-login-password --region ap-northeast-1)" >> $GITHUB_OUTPUT
-      - name: Get User
-        id: get_user_info
-        run: aws sts get-caller-identity | base64
+
   Pipeline:
     needs: login
     strategy:
@@ -31,9 +29,18 @@ jobs:
       credentials:
         username: AWS
         password: ${{needs.login.outputs.aws_password}}
+
     steps:
-      - name: get_hello
-        run: |
-          echo "hello world"
-          cat /etc/lsb_release
-          
+      - name: Docker meta
+        uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick
+          tags: |
+            type=tag,event=workflow_dispatch
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
