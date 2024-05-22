@@ -28,7 +28,7 @@ jobs:
         id: get_tag
         run: |
           git fetch --tags
-          tag=$(git tag | tail -n 1)
+          tag=$(git tag --sort=committerdate --merged main | tail -n 1)
           echo "latest_tag=${tag}"
           echo "tag=${tag}" >> $GITHUB_OUTPUT
       -
