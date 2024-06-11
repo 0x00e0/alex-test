@@ -23,9 +23,6 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
         
       - name: get_tag
         id: get_tag
@@ -47,3 +44,6 @@ jobs:
         with:
           tags: ${{ steps.meta.outputs.tags }}
           push: true
+
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
