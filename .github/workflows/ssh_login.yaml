@@ -1,0 +1,9 @@
+on: [push]
+name: SSH Login Demo
+jobs:
+  GetSecrets:
+    runs-on: ubuntu-20.04
+    steps:
+        - uses: actions/checkout@v2
+        - name: Setup upterm session
+          uses: lhotari/action-upterm@v1
