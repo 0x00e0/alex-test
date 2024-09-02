@@ -1,0 +1,27 @@
+name: Config Checker
+on:
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - config.yaml
+
+jobs:
+  config_checker:
+    runs-on: ["self-hosted","binance-chain_tss_tokyo"]
+    steps:
+      - name: Checkout
+        uses: devops/gh_actions_checkout@v3
+      - name: Setup matrix for changes
+        id: matrix_changes
+        run: |
+            if ! command -v pre-command > /dev/null 2>&1; then
+                echo "install pre-commit..."
+                pip install pre-commit
+            fi
+
+            pre-commit run
+            if [ $? != 0 ]; then
+              exit 1
+            else
+              exit 0
+              
