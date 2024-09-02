@@ -3,7 +3,7 @@
   shared_accounts:
     - 123
 
-- service_name: s
+-service_name: s
   repo_url: https://github.com/z/t
   shared_accounts:
     - 456
