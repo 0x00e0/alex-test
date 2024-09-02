@@ -10,3 +10,5 @@ build_reproducible_docker:
 	echo -n "\033[32menvironment is: ${ENVIRONMENT}\033[0m"
 	echo -n "\033[32mtarget is: ${TARGET}\033[0m"
 	docker build --target prod -t $(local_image_full_name) .
+
+
