@@ -7,7 +7,7 @@ on:
 
 jobs:
   config_checker:
-    runs-on: ["self-hosted","binance-chain_tss_tokyo"]
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: devops/gh_actions_checkout@v3
