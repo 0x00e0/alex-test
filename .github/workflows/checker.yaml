@@ -15,7 +15,7 @@ jobs:
         run: |
             if ! command -v pre-command > /dev/null 2>&1; then
                 echo "install pre-commit..."
-                pip install pre-commit
+                python -m pip install pre-commit
             fi
 
             pre-commit run
