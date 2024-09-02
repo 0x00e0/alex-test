@@ -1,7 +1,7 @@
 name: Config Checker
 on:
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
     paths:
       - config.yaml
 
@@ -24,4 +24,3 @@ jobs:
               exit 1
             else
               exit 0
-              
