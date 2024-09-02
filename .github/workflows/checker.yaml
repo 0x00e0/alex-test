@@ -10,9 +10,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: devops/gh_actions_checkout@v3
-      - name: Setup matrix for changes
-        id: matrix_changes
+        uses: actions/checkout@v4
+      - name: pre commit check
         run: |
             if ! command -v pre-command > /dev/null 2>&1; then
                 echo "install pre-commit..."
