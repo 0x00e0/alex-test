@@ -7,14 +7,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 app = FastAPI()
 
-
+@app.get("/health")
 @app.get("/")
 async def read_root():
     return {"Hello": "World"}
 
-@app.get("/health")
-async def read_root():
-    return {"status": "ok"}
 
 @app.get("/api/v1/error")
 async def error_event():
