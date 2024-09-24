@@ -1,6 +1,6 @@
 from models.common import  RequestContent
-from fastapi import FastAPI
-import uvicorn
+from fastapi import FastAPI, HTTPException
+import json
 import os
 import aiohttp
 import logging
@@ -25,12 +25,18 @@ async def panic_event():
     logger.error({"level": "panic", "message": "path /api/v1/panic was triggered"})
     os._exit(1)
 
-
 @app.post("/api/v1/post")
 async def post_request(request_content: RequestContent):
+    headers = {
+    'Content-Type': 'application/json'
+    }
     async with aiohttp.ClientSession() as session:
-        async with session.post(url=request_content.url, data= request_content.data) as response:
-            return f"response content is: \n{response.content}"
+        async with session.post(url=request_content.url, data= request_content.data, headers=headers) as response:
+            try:
+                data = await response.json()
+                return f"response content is: \n{data}"
+            except aiohttp.ContentTypeError:
+                raise HTTPException(status_code=500, detail="Invalid response content type")
 
 if __name__ == "__main__":
     import uvicorn
