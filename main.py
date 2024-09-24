@@ -1,6 +1,5 @@
 from models.common import  RequestContent
 from fastapi import FastAPI, HTTPException
-import json
 import os
 import aiohttp
 import logging
