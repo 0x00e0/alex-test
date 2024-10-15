@@ -10,6 +10,6 @@ build_reproducible_docker:
 	echo -n "\033[32menvironment is: ${ENVIRONMENT}\033[0m"
 	echo -n "\033[32mtarget is: ${TARGET}\033[0m"
 	docker build -t ${LOCAL_IMAGE_FULL_NAME} .
-	docker tag ${LOCAL_IMAGE_FULL_NAME} alextest
-	docker push
+	docker tag ${LOCAL_IMAGE_FULL_NAME} 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/alextest
+	docker push 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/alextest
 
