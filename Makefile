@@ -10,5 +10,6 @@ build_reproducible_docker:
 	echo -n "\033[32menvironment is: ${ENVIRONMENT}\033[0m"
 	echo -n "\033[32mtarget is: ${TARGET}\033[0m"
 	docker build -t ${LOCAL_IMAGE_FULL_NAME} .
-	docker push ${LOCAL_IMAGE_FULL_NAME} alextest
+	docker tag ${LOCAL_IMAGE_FULL_NAME} alextest
+	docker push
 
