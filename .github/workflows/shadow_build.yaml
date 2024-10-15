@@ -60,4 +60,4 @@ jobs:
         env:
           IMAGE_TAG: ${{ steps.meta.outputs.tags }}
           SERVICE_NAME: 'alex-test'
-          GITHUB_REPO: https://github.com/0x00e0/alex-test
+          GITHUB_REPO: github.com/0x00e0/alex-test
