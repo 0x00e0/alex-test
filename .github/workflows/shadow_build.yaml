@@ -55,7 +55,9 @@ jobs:
           disable-source-override: true
           env-vars-for-codebuild: |
             IMAGE_TAG,
-            SERVICE_NAME
+            SERVICE_NAME,
+            GITHUB_REPO
         env:
           IMAGE_TAG: ${{ steps.meta.outputs.tags }}
           SERVICE_NAME: 'alex-test'
+          GITHUB_REPO: https://github.com/0x00e0/alex-test
