@@ -1,4 +1,4 @@
-module go_src
+module main
 
 go 1.21.0
 
