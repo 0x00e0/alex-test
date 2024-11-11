@@ -1,8 +1,11 @@
-FROM python:3.12
-WORKDIR /app
-COPY main.py .
-COPY models models
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+FROM golang:1.21 as build
 
-CMD ["python","main.py"]
+WORKDIR /app
+COPY . .
+
+RUN go mod download
+RUN CGO_ENABLED=0 go build -o /app/main .
+
+FROM gcr.io/distroless/static-debian12
+COPY --from=build /app /app/main
+CMD ["/app/main"]
