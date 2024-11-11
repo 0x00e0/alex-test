@@ -36,6 +36,11 @@ jobs:
           tag=$(git describe --tags --exact-match)
           echo "latest_tag=${tag}"
           echo "tag=${tag}" >> $GITHUB_OUTPUT
+      - name: get_epoch
+        id: get_epoch
+        run: |
+          epoch=$(git show -s --format=%ct HEAD)
+          echo "epoch=${epoch}" >> $GITHUB_OUTPUT
       -
         name: Docker meta
         id: meta
@@ -78,4 +83,4 @@ jobs:
           IMAGE_TAG: ${{ steps.get_tag.outputs.tag }}
           SERVICE_NAME: 'alex-test'
           GITHUB_REPO: github.com/0x00e0/alex-test
-          EPOCH: $(git show -s --format=%ct HEAD)
+          EPOCH: ${{steps.get_epoch.outputs.epoch}}
