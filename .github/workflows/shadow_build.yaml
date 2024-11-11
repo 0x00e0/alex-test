@@ -52,9 +52,9 @@ jobs:
 
       - name: run build
         run: |
-          export DOCKER_BUILDKIT=1 \
-          export SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD) \
-          docker buildx create --use --driver-opt image=moby/buildkit:v0.15.1 \
+          export DOCKER_BUILDKIT=1; \
+          export SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD); \
+          docker buildx create --use --driver-opt image=moby/buildkit:v0.15.1; \
           docker buildx build \
             -f Dockerfile \
             --output type=image,rewrite-timestamp=true,push=true,\"name=${{ steps.meta.outputs.tags }}\" \
