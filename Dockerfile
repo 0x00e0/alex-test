@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 
 RUN go mod download
-RUN go build -o /app/main .
+RUN CGO_ENABLED=0 go build -o /app/main .
 
 FROM gcr.io/distroless/static-debian12
 COPY --from=build /app/main /app/main
