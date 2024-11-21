@@ -54,7 +54,8 @@ jobs:
 #        with:
 #          tags: ${{ steps.meta.outputs.tags }}
 #          push: true
-
+      - name: Get short SHA
+        run: echo "SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
       - name: run build
         run: |
           export DOCKER_BUILDKIT=1; \
@@ -66,6 +67,9 @@ jobs:
             --provenance false \
             --platform linux/amd64 \
             --progress=plain \
+            --label org.opencontainers.image.revision=${{ env.SHORT_SHA }} \
+            --label org.opencontainers.image.branch=${{ github.ref_name }} \
+            --label  org.opencontainers.image.authors=${{ github.actor }} \
             .
           docker buildx rm
 
