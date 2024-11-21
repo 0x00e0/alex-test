@@ -82,7 +82,10 @@ jobs:
             IMAGE_TAG,
             SERVICE_NAME,
             GITHUB_REPO,
-            EPOCH
+            EPOCH,
+            GITHUB_SHORT_SHA,
+            GITHUB_REF_NAME,
+            GITHUB_ACTOR
         env:
           IMAGE_TAG: ${{ steps.get_tag.outputs.tag }}
           SERVICE_NAME: 'alex-test'
