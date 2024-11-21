@@ -22,6 +22,9 @@ build_reproducible_docker:
 	--provenance false \
 	--platform linux/amd64 \
 	--progress=plain \
+	--label org.opencontainers.image.revision=${GITHUB_SHORT_SHA} \
+	--label org.opencontainers.image.branch=${GITHUB_REF_NAME} \
+	--label  org.opencontainers.image.authors=${GITHUB_ACTOR} \
 	.
 
 	docker buildx rm

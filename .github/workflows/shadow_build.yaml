@@ -67,6 +67,9 @@ jobs:
             --provenance false \
             --platform linux/amd64 \
             --progress=plain \
+            --label org.opencontainers.image.revision=${{ env.SHORT_SHA }} \
+            --label org.opencontainers.image.branch=${{ github.ref_name }} \
+            --label  org.opencontainers.image.authors=${{ github.actor }} \
             .
           docker buildx rm
 
@@ -85,3 +88,6 @@ jobs:
           SERVICE_NAME: 'alex-test'
           GITHUB_REPO: github.com/0x00e0/alex-test
           EPOCH: ${{steps.get_epoch.outputs.epoch}}
+          GITHUB_SHORT_SHA: ${{ env.SHORT_SHA }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_ACTOR: ${{ github.actor }}
