@@ -1,74 +1,50 @@
-name: Auto Build & Push To Amazon ECR
-
 on: [workflow_dispatch]
-
+name: manual push to qa
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  Pipeline:
+    runs-on: ubuntu-22.04
     permissions:
       id-token: write
-      contents: write
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: paulhatch/semantic-version@v4.0.2
-        if: github.ref == 'refs/heads/main'
-        id: semver
-        with:
-          tag_prefix: "v"
-          major_pattern: "BREAKING CHANGE:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}"
-          short_tags: false
-          bump_each_commit: true
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag_prefix: ""
-          custom_tag: ${{ steps.semver.outputs.version_tag }}
+      contents: read
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    steps:
+
       - name: Configure AWS Credentials
         if: github.ref == 'refs/heads/main'
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2.2.0
         with:
-          role-to-assume: arn:aws:iam::545408478668:role/ghe-test-role
+          role-to-assume: ${{ secrets.AWS_QA_ROLE }}
           aws-region: ap-northeast-1
       - name: Login to Amazon ECR Private
         if: github.ref == 'refs/heads/main'
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+  
 
-      # - name: pull_wallet_core
-      #   if: github.ref == 'refs/heads/main'
-      #   run: |
-      #     docker pull 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore:v4.2.0
-      #     docker tag 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore:v4.2.0 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:v1.1.0
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      # - name: push_test_image
-      #   if: github.ref == 'refs/heads/main'
-      #   run: |
-      #       docker push 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:v1.1.0
-      - name: Docker meta
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: get_tag
+        id: get_tag
+        run: |
+          git fetch --tags
+          tag=$(git describe --tags --exact-match)
+          echo "latest_tag=${tag}"
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
+      - name: get_epoch
+        id: get_epoch
+        run: |
+          epoch=$(git show -s --format=%ct HEAD)
+          echo "epoch=${epoch}" >> $GITHUB_OUTPUT
+      -
+        name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
-          images: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick
-      - name: Build Image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          target: prod
-          tags: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/test_nick:${{ steps.semver.outputs.version_tag }}
-          build-args: |
-            WALLET_CORE_IMAGE=545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/tssqa-qa-github-walletcore
-          provenance: false
-          sbom: false
-
+          images: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/github-alextest
+          tags: type=raw,value=${{ steps.get_tag.outputs.tag }}
