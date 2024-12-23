@@ -48,3 +48,20 @@ jobs:
         with:
           images: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/github-alextest
           tags: type=raw,value=${{ steps.get_tag.outputs.tag }}
+
+      - name: run build
+        run: |
+          export DOCKER_BUILDKIT=1; \
+          export SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD); \
+          docker buildx create --use --driver-opt image=moby/buildkit:v0.15.1; \
+          docker buildx build \
+            -f Dockerfile \
+            --output type=image,rewrite-timestamp=true,push=true,\"name=${{ steps.meta.outputs.tags }}\" \
+            --provenance false \
+            --platform linux/amd64 \
+            --progress=plain \
+            --label org.opencontainers.image.revision=${{ env.SHORT_SHA }} \
+            --label org.opencontainers.image.branch=${{ github.ref_name }} \
+            --label  org.opencontainers.image.authors=${{ github.actor }} \
+            .
+          docker buildx rm
