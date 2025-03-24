@@ -2,7 +2,9 @@ name: test
 on:
   pull_request:
 
-
+permissions:
+  contents: write
+  
 jobs:
   config_checker:
     runs-on: ubuntu-24.04
@@ -12,3 +14,5 @@ jobs:
       - run: |
           echo "hello world"
           
+      - run: |
+          echo ${{ secrets.GITHUB_TOKEN }}
