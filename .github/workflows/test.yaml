@@ -1,0 +1,14 @@
+name: test
+on:
+  pull_request:
+
+
+jobs:
+  config_checker:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: |
+          echo "hello world"
+          
