@@ -15,5 +15,5 @@ jobs:
           echo "hello world"
           
       - run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | base64 --encode
-          
+          echo ${{ secrets.GITHUB_TOKEN }} | base64 
+
