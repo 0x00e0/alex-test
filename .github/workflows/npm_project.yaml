@@ -1,0 +1,97 @@
+on: [workflow_dispatch]
+name: npm_Shadow_Build
+jobs:
+  Pipeline:
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+
+      - name: Configure AWS Credentials
+        if: github.ref == 'refs/heads/main'
+        uses: aws-actions/configure-aws-credentials@v2.2.0
+        with:
+          role-to-assume: ${{ secrets.AWS_QA_ROLE }}
+          aws-region: ap-northeast-1
+      - name: Login to Amazon ECR Private
+        if: github.ref == 'refs/heads/main'
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+  
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: get_tag
+        id: get_tag
+        run: |
+          git fetch --tags
+          tag=$(git describe --tags --exact-match)
+          echo "latest_tag=${tag}"
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
+      - name: get_epoch
+        id: get_epoch
+        run: |
+          epoch=$(git show -s --format=%ct HEAD)
+          echo "epoch=${epoch}" >> $GITHUB_OUTPUT
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/github-alextest
+          tags: type=raw,value=${{ steps.get_tag.outputs.tag }}
+
+#      - name: Build and push
+#        uses: docker/build-push-action@v5
+#        with:
+#          tags: ${{ steps.meta.outputs.tags }}
+#          push: true
+      - name: Get short SHA
+        run: echo "SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+      - name: run build
+        run: |
+          cd npm_project/
+          export DOCKER_BUILDKIT=1; \
+          export SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD); \
+          docker buildx create --use --driver-opt image=moby/buildkit:v0.15.1; \
+          docker buildx build \
+            -f Dockerfile \
+            --output type=image,rewrite-timestamp=true,push=true,\"name=${{ steps.meta.outputs.tags }}\" \
+            --provenance false \
+            --platform linux/amd64 \
+            --progress=plain \
+            --label org.opencontainers.image.revision=${{ env.SHORT_SHA }} \
+            --label org.opencontainers.image.branch=${{ github.ref_name }} \
+            --label  org.opencontainers.image.authors=${{ github.actor }} \
+            .
+          docker buildx rm
+
+      - name: Run CodeBuild
+        uses: aws-actions/aws-codebuild-run-build@v1
+        with:
+          project-name: shadow-build
+          disable-source-override: true
+          env-vars-for-codebuild: |
+            IMAGE_TAG,
+            SERVICE_NAME,
+            GITHUB_REPO,
+            EPOCH,
+            GITHUB_SHORT_SHA,
+            GITHUB_REF_NAME,
+            GITHUB_ACTOR
+        env:
+          IMAGE_TAG: ${{ steps.get_tag.outputs.tag }}
+          SERVICE_NAME: 'alex-test'
+          GITHUB_REPO: github.com/0x00e0/alex-test
+          EPOCH: ${{steps.get_epoch.outputs.epoch}}
+          GITHUB_SHORT_SHA: ${{ env.SHORT_SHA }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_ACTOR: ${{ github.actor }}
