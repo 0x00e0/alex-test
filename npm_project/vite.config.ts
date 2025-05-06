@@ -3,16 +3,17 @@ import path from 'path';
 
 export default defineConfig({
   build: {
+    outDir: '/dist',
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'MyPackage',
-      fileName: (format) => `my-package.${format}.js`,
+      name: 'alexliudemo',
+      fileName: (format) => `alexliudemo.${format}.js`,
     },
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith('.css')) {
-            return 'my-package.css';
+            return 'alexliudemo.css';
           }
           return assetInfo.name!;
         }
