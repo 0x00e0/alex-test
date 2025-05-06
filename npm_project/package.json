@@ -1,0 +1,20 @@
+{
+  "name": "alexliudemo",
+  "version": "1.0.0",
+  "main": "/dist/alexliudemo.umd.js",
+  "module": "/dist/alexliudemo.es.js",
+  "types": "/dist/index.d.ts",
+  "scripts": {
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  }
+}

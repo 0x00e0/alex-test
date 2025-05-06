@@ -12,7 +12,9 @@ build_reproducible_docker:
 	# docker build -t ${LOCAL_IMAGE_FULL_NAME} .
 	# docker tag ${LOCAL_IMAGE_FULL_NAME} 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/alextest:${IMAGE_TAG}
 	# docker push 545408478668.dkr.ecr.ap-northeast-1.amazonaws.com/alextest:${IMAGE_TAG}
-
+	# comment out for non-npm project
+	cd npm_project;
+	# end comment out
 	export DOCKER_BUILDKIT=1; \
     export SOURCE_DATE_EPOCH="${EPOCH}"; \
 	docker buildx create --use --driver-opt image=moby/buildkit:v0.15.1; \
